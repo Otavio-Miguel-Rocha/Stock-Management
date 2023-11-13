@@ -1,6 +1,7 @@
 package net.weg.stockmanagement.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,33 +17,40 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull(message = "The name of Product cannot be null")
+    @NotEmpty(message = "The name of Product cannot be empty")
     private String name;
 
     @Column(nullable = false)
+
+    @Positive(message = "The price of Product cannot be lower or equals than zero")
     private Double price;
 
-    @Column(nullable = false)
+    @Min(value = 0, message = "The stock of Product cannot be lower than zero")
     private Integer stock;
 
-    @Column(nullable = false)
+    @NotNull(message = "The end date of Product cannot be empty")
     private Date endDate;
 
-    @Column(nullable = false)
+    @NotNull(message = "The description of Product cannot be null")
+    @NotEmpty(message = "The description of Product cannot be empty")
     private String description;
 
-    @Column(nullable = false, unique = true, updatable = false)
+    @NotNull(message = "The code bar of Product cannot be null")
+    @Column(unique = true, updatable = false)
     private Long codeBar;
 
-    @Column(nullable = false)
+    @NotNull(message = "The weight of Product cannot be null")
+    @Min(value = 0, message = "The weight of Product cannot be lower than zero")
     private Double weight;
 
-    @Column(nullable = false)
+    @NotNull(message = "The width of Product cannot be null")
+    @Min(value = 0, message = "The width of Product cannot be lower than zero")
     private Double width;
 
-    @Column(nullable = false)
-    private String manufacturer;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Manufacturer manufacturer;
 
-    @Column(nullable = false)
-    private String category;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Category category;
 }

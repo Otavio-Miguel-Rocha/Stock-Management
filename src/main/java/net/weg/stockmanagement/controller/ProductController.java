@@ -1,8 +1,8 @@
 package net.weg.stockmanagement.controller;
 
-import net.weg.stockmanagement.model.DTO.ProductDTO;
 import net.weg.stockmanagement.model.entity.Product;
 import net.weg.stockmanagement.model.exceptions.ProductAlreadyExistException;
+import net.weg.stockmanagement.model.exceptions.ProductCodeBarDoesntExistException;
 import net.weg.stockmanagement.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +21,11 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findById(@PathVariable Long id){
+    public ResponseEntity<?> findById(@PathVariable Long id){
         try{
             return new ResponseEntity<>(productService.findById(id), HttpStatus.OK);
         } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
     @GetMapping
@@ -39,11 +39,11 @@ public class ProductController {
 
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody ProductDTO productDTO){
+    public ResponseEntity<?> save(@RequestBody Product product){
         try{
-            return new ResponseEntity<>(productService.save(productDTO), HttpStatus.OK);
+            return new ResponseEntity<>(productService.save(product), HttpStatus.OK);
         } catch (ProductAlreadyExistException e){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -52,21 +52,21 @@ public class ProductController {
 
 
     @PutMapping
-    public ResponseEntity<?> edit(@RequestBody ProductDTO productDTO){
+    public ResponseEntity<?> edit(@RequestBody Product product){
         try{
-            return new ResponseEntity<>(productService.edit(productDTO), HttpStatus.OK);
-        } catch (Exception e){
+            return new ResponseEntity<>(productService.edit(product), HttpStatus.OK);
+        } catch (ProductCodeBarDoesntExistException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Product> delete(@PathVariable Long id){
+    @DeleteMapping("/{codeBar}")
+    public ResponseEntity<?> delete(@PathVariable Long codeBar){
         try{
-            productService.delete(id);
+            productService.delete(codeBar);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
